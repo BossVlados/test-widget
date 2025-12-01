@@ -64,7 +64,6 @@ const Catalog = observer(() => {
       return `rgba(59, 130, 246, ${alpha})`;
     }
     
-    // Если hex содержит 8 символов (включая альфа), берем первые 6
     const hexColor = hex.length === 8 ? hex.slice(0, 6) : hex;
     
     try {
@@ -78,10 +77,9 @@ const Catalog = observer(() => {
     }
   };
 
-  // Функция для получения чистого hex цвета (без альфа канала)
   const getPureHex = (hex: string) => {
     if (!hex || typeof hex !== 'string' || hex.length < 6) {
-      return '#3b82f6'; // синий по умолчанию
+      return '#3b82f6';
     }
     const hexColor = hex.length === 8 ? hex.slice(0, 6) : hex;
     return `#${hexColor}`;
