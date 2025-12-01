@@ -12,7 +12,6 @@ const Catalog = observer(() => {
   const products = widgetStore.filteredProducts;
   const dealers = widgetStore.dealers;
 
-  // Загрузка фильтров из URL при монтировании
   useEffect(() => {
     const dealersParam = searchParams.get('dealers');
     const sortParam = searchParams.get('sort') as SortOrder;
@@ -23,7 +22,6 @@ const Catalog = observer(() => {
     widgetStore.setFiltersFromUrl(dealerIds, sort);
   }, []);
 
-  // Обновление URL при изменении фильтров
   useEffect(() => {
     const params = new URLSearchParams();
     

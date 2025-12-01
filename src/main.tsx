@@ -1,17 +1,22 @@
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import { widgetStore } from './stores/WidgetStore'
-import App from './App.tsx'
+import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
+import { widgetStore } from "./stores/WidgetStore";
 
 interface WidgetConfig {
   el: string;
   dealers?: string[];
 }
 
-// Класс виджета для инициализации
+declare global {
+  interface Window {
+    WidgetCatalog: typeof WidgetCatalog;
+  }
+}
+
 class WidgetCatalog {
   private config: WidgetConfig;
-  private root: any;
+  private root: ReturnType<typeof createRoot> | null = null;
 
   constructor(config: WidgetConfig) {
     this.config = config;
@@ -24,10 +29,8 @@ class WidgetCatalog {
       return;
     }
 
-    // Инициализируем store с дилерами
     widgetStore.initialize(this.config.dealers);
 
-    // Рендерим приложение
     this.root = createRoot(element);
     this.root.render(<App />);
   }
@@ -39,16 +42,12 @@ class WidgetCatalog {
   }
 }
 
-// Экспортируем класс в window
-(window as any).WidgetCatalog = WidgetCatalog;
+window.WidgetCatalog = WidgetCatalog;
 
-// Для разработки - инициализация при загрузке
-if (import.meta.env.DEV) {
-  window.addEventListener('load', () => {
-    const widget = new WidgetCatalog({
-      el: '#root',
-      dealers: []
-    });
-    widget.run();
+window.addEventListener('load', () => {
+  const widget = new WidgetCatalog({
+    el: '#root',
+    dealers: []
   });
-}
+  widget.run();
+});
