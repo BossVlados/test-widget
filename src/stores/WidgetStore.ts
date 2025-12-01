@@ -40,15 +40,13 @@ class WidgetStore {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    // API возвращает массив цветов: ["0c4aab30", "1efa7e46", "86e64a33"]
     const colors = await response.json();
     console.log('Dealer colors from API:', colors);
     
-    // Преобразуем массив цветов в массив дилеров
     this.dealers = colors.map((color: string, index: number) => {
       const dealer = {
-        id: `dealer_${index + 1}`, // Создаем ID типа dealer_1, dealer_2 и т.д.
-        name: color // Сохраняем цвет в поле name
+        id: `dealer_${index + 1}`,
+        name: color
       };
       console.log(`Created dealer ${index}:`, dealer);
       return dealer;
