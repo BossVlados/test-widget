@@ -3,6 +3,7 @@ import { Button, Card, Empty } from 'antd';
 import { DeleteOutlined, PlusOutlined, MinusOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { widgetStore } from '../stores/WidgetStore';
+import { getImageUrl, handleImageError } from '../lib/imageUtils';
 
 const Cart = observer(() => {
   const cart = widgetStore.cart;
@@ -76,9 +77,10 @@ const Cart = observer(() => {
               >
                 <div className="flex flex-col sm:flex-row gap-4">
                   <img
-                    src={item.image}
+                    src={getImageUrl(item.image)}
                     alt={item.name}
                     className="w-full sm:w-32 h-32 object-cover rounded"
+                    onError={handleImageError}
                   />
                   
                   <div className="flex-1">

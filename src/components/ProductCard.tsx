@@ -3,6 +3,7 @@ import { Card, Button } from 'antd';
 import { ShoppingCartOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { Product } from '../types/product';
 import { widgetStore } from '../stores/WidgetStore';
+import { getImageUrl, handleImageError } from '../lib/imageUtils';
 
 interface ProductCardProps {
   product: Product;
@@ -65,11 +66,9 @@ const ProductCard = observer(({ product, compact = false }: ProductCardProps) =>
         <div className="relative overflow-hidden bg-muted">
           <img
             alt={product.name}
-            src={product.image.startsWith('http') ? product.image : `https://test-frontend.dev.int.perx.ru${product.image}`}
+            src={getImageUrl(product.image)}
             className="h-48 w-full object-cover transition-transform duration-300 hover:scale-110"
-            onError={(e) => {
-              e.currentTarget.src = 'https://via.placeholder.com/400x300?text=No+Image';
-            }}
+            onError={handleImageError}
           />
           <div 
             className="absolute top-2 right-2 px-3 py-1.5 rounded-md text-xs font-medium 
