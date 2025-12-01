@@ -76,7 +76,7 @@ const Cart = observer(() => {
               >
                 <div className="flex flex-col sm:flex-row gap-4">
                   <img
-                    src={item.picture}
+                    src={item.image}
                     alt={item.name}
                     className="w-full sm:w-32 h-32 object-cover rounded"
                   />

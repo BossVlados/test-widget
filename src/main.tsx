@@ -22,14 +22,14 @@ class WidgetCatalog {
     this.config = config;
   }
 
-  run() {
+  async run() {
     const element = document.querySelector(this.config.el);
     if (!element) {
       console.error(`Element ${this.config.el} not found`);
       return;
     }
 
-    widgetStore.initialize(this.config.dealers);
+    await widgetStore.initialize(this.config.dealers);
 
     this.root = createRoot(element);
     this.root.render(<App />);

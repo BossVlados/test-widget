@@ -13,6 +13,35 @@ const ProductCard = observer(({ product, compact = false }: ProductCardProps) =>
   const isInCart = widgetStore.isInCart(product.id);
   const quantity = widgetStore.getCartQuantity(product.id);
 
+  const dealer = widgetStore.dealers.find(d => d.id === product.dealer);
+
+  const hexToRgba = (hex: string, alpha: number = 1) => {
+    if (!hex || typeof hex !== 'string' || hex.length < 6) {
+      return `rgba(59, 130, 246, ${alpha})`;
+    }
+    
+    const hexColor = hex.length === 8 ? hex.slice(0, 6) : hex;
+    
+    try {
+      const r = parseInt(hexColor.slice(0, 2), 16);
+      const g = parseInt(hexColor.slice(2, 4), 16);
+      const b = parseInt(hexColor.slice(4, 6), 16);
+      
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    } catch (error) {
+      return `rgba(59, 130, 246, ${alpha})`;
+    }
+  };
+
+  // Функция для получения чистого hex цвета
+  const getPureHex = (hex: string) => {
+    if (!hex || typeof hex !== 'string' || hex.length < 6) {
+      return '#3b82f6';
+    }
+    const hexColor = hex.length === 8 ? hex.slice(0, 6) : hex;
+    return `#${hexColor}`;
+  };
+
   const handleAddToCart = () => {
     widgetStore.addToCart(product);
   };
@@ -25,6 +54,9 @@ const ProductCard = observer(({ product, compact = false }: ProductCardProps) =>
     widgetStore.removeOneFromCart(product.id);
   };
 
+  const dealerColor = dealer?.name;
+  const pureHex = getPureHex(dealerColor);
+
   return (
     <Card
       hoverable
@@ -33,11 +65,26 @@ const ProductCard = observer(({ product, compact = false }: ProductCardProps) =>
         <div className="relative overflow-hidden bg-muted">
           <img
             alt={product.name}
-            src={product.picture}
+            src={product.image.startsWith('http') ? product.image : `https://test-frontend.dev.int.perx.ru${product.image}`}
             className="h-48 w-full object-cover transition-transform duration-300 hover:scale-110"
+            onError={(e) => {
+              e.currentTarget.src = 'https://via.placeholder.com/400x300?text=No+Image';
+            }}
           />
-          <div className="absolute top-2 right-2 bg-primary text-primary-foreground px-2 py-1 rounded text-xs font-medium">
-            {widgetStore.dealers.find(d => d.id === product.dealer)?.name || product.dealer}
+          <div 
+            className="absolute top-2 right-2 px-3 py-1.5 rounded-md text-xs font-medium 
+                     flex items-center gap-2 shadow-sm"
+            style={{
+              backgroundColor: hexToRgba(dealerColor, 0.15),
+              color: pureHex,
+              border: `1px solid ${hexToRgba(dealerColor, 0.3)}`
+            }}
+          >
+            <div 
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: pureHex }}
+            />
+            {product.dealer}
           </div>
         </div>
       }

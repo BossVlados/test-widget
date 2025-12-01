@@ -59,6 +59,34 @@ const Catalog = observer(() => {
     return 'Сортировка';
   };
 
+  const hexToRgba = (hex: string, alpha: number = 1) => {
+    if (!hex || typeof hex !== 'string' || hex.length < 6) {
+      return `rgba(59, 130, 246, ${alpha})`;
+    }
+    
+    // Если hex содержит 8 символов (включая альфа), берем первые 6
+    const hexColor = hex.length === 8 ? hex.slice(0, 6) : hex;
+    
+    try {
+      const r = parseInt(hexColor.slice(0, 2), 16);
+      const g = parseInt(hexColor.slice(2, 4), 16);
+      const b = parseInt(hexColor.slice(4, 6), 16);
+      
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    } catch (error) {
+      return `rgba(59, 130, 246, ${alpha})`;
+    }
+  };
+
+  // Функция для получения чистого hex цвета (без альфа канала)
+  const getPureHex = (hex: string) => {
+    if (!hex || typeof hex !== 'string' || hex.length < 6) {
+      return '#3b82f6'; // синий по умолчанию
+    }
+    const hexColor = hex.length === 8 ? hex.slice(0, 6) : hex;
+    return `#${hexColor}`;
+  };
+
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-background py-8 animate-fade-in">
       <div className="container mx-auto px-4">
@@ -73,27 +101,33 @@ const Catalog = observer(() => {
               Фильтр по дилерам:
             </h3>
             <div className="flex flex-wrap gap-2">
-              {dealers.map((dealer) => (
-                <Tag.CheckableTag
-                  key={dealer.id}
-                  checked={widgetStore.selectedDealers.includes(dealer.id)}
-                  onChange={() => handleDealerToggle(dealer.id)}
-                  className="cursor-pointer px-4 py-2 rounded-full border-2 transition-all"
-                  style={{
-                    backgroundColor: widgetStore.selectedDealers.includes(dealer.id) 
-                      ? 'hsl(var(--primary))' 
-                      : 'transparent',
-                    borderColor: widgetStore.selectedDealers.includes(dealer.id)
-                      ? 'hsl(var(--primary))'
-                      : 'hsl(var(--border))',
-                    color: widgetStore.selectedDealers.includes(dealer.id)
-                      ? 'hsl(var(--primary-foreground))'
-                      : 'hsl(var(--foreground))',
-                  }}
-                >
-                  {dealer.name}
-                </Tag.CheckableTag>
-              ))}
+              {dealers.map((dealer) => {
+                if (!dealer || !dealer.id) return null;
+                const isSelected = widgetStore.selectedDealers.includes(dealer.id);
+                const dealerColorHex = dealer.name;
+                const pureHex = getPureHex(dealerColorHex);
+                
+                return (
+                  <Tag.CheckableTag
+                    key={dealer.id}
+                    checked={isSelected}
+                    onChange={() => handleDealerToggle(dealer.id)}
+                    className="cursor-pointer px-4 py-2 rounded-full border-2 transition-all font-medium"
+                    style={{
+                      backgroundColor: isSelected 
+                        ? hexToRgba(dealerColorHex, 0.15)
+                        : 'transparent',
+                      borderColor: isSelected
+                        ? pureHex
+                        : hexToRgba(dealerColorHex, 0.3),
+                      color: pureHex,
+                      fontWeight: isSelected ? '600' : '400'
+                    }}
+                  >
+                    {dealer.id.replace('dealer_', '')}
+                  </Tag.CheckableTag>
+                );
+              })}
             </div>
           </div>
 
